@@ -1,4 +1,4 @@
-package priv.wufei.tools.xml;
+package priv.wufei.utils.xml;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;

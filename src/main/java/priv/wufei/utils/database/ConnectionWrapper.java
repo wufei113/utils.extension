@@ -1,4 +1,4 @@
-package priv.wufei.tools.database;
+package priv.wufei.utils.database;
 
 import java.sql.Array;
 import java.sql.Blob;

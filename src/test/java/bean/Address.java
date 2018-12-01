@@ -9,11 +9,13 @@ public class Address implements Serializable {
 
     private int postcode;//邮编
 
+
     public Address(int postcode) {
         this.postcode = postcode;
     }
 
     public Address() {
+        System.out.println("hh");
     }
 
     public int getPostcode() {
