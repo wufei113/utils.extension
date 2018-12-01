@@ -70,8 +70,8 @@ public final class Asm {
             }
 
             @Override
-            public MethodVisitor visitMethod(int access, String name,
-                                             String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+
                 MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
                 MethodVisitor wrappedMv = mv;

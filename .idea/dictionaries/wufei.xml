@@ -6,9 +6,11 @@
       <w>iface</w>
       <w>javaagent</w>
       <w>javap</w>
+      <w>javase</w>
       <w>jvms</w>
       <w>priv</w>
       <w>wufei</w>
+      <w>zxing</w>
     </words>
   </dictionary>
 </component>
