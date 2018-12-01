@@ -170,11 +170,11 @@ public final class QRCode {
             //花更多的时间用于寻找图上的编码，优化准确性，但不优化速度
             hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
-            //读取二维码结果
+            //解析
             BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(image);
             HybridBinarizer hybridBinarizer = new HybridBinarizer(source);
             BinaryBitmap binaryBitmap = new BinaryBitmap(hybridBinarizer);
-
+            //读取二维码结果
             MultiFormatReader multiFormatReader = new MultiFormatReader();
             Result result = multiFormatReader.decode(binaryBitmap, hints);
 
