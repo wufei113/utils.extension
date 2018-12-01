@@ -70,7 +70,7 @@ public final class QRCode {
         try {
             image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
             //定义二维码的参数
-            Map<EncodeHintType, Object> hints = new HashMap<>();
+            Map<EncodeHintType, Object> hints = new HashMap<>(8);
             //设置编码
             hints.put(EncodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
             //设置纠错等级
@@ -164,7 +164,7 @@ public final class QRCode {
 
         try {
             //定义二维码解码参数
-            Map<DecodeHintType, Object> hints = new HashMap<>();
+            Map<DecodeHintType, Object> hints = new HashMap<>(4);
             //设置编码
             hints.put(DecodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
             //花更多的时间用于寻找图上的编码，优化准确性，但不优化速度
