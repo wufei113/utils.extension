@@ -66,8 +66,4 @@ public class Person implements Serializable {
     public void sleep() {
         System.out.println("睡觉");
     }
-
-    public void sleep(boolean b) {
-        System.out.println("不睡觉");
-    }
 }

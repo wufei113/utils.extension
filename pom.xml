@@ -13,12 +13,14 @@
         <wufei.utils.basis.version>1.0.0</wufei.utils.basis.version>
         <!-- dom4j(xml) -->
         <dom4j.version>2.1.1</dom4j.version>
-        <!-- h2database(数据库) -->
-        <h2database.version>1.4.197</h2database.version>
-        <!-- javassist(字节码) -->
-        <javassist.version>3.24.0-GA</javassist.version>
+        <!-- fastjson(JSON) -->
+        <fastjson.version>1.2.54</fastjson.version>
         <!-- asm(字节码) -->
         <asm.version>7.0</asm.version>
+        <!-- javassist(字节码) -->
+        <javassist.version>3.24.0-GA</javassist.version>
+        <!-- h2database(数据库) -->
+        <h2database.version>1.4.197</h2database.version>
         <!-- zxing(图形码) -->
         <zxing.version>3.3.3</zxing.version>
         <!-- junit -->
@@ -117,11 +119,18 @@
                 <version>${dom4j.version}</version>
             </dependency>
 
-            <!-- h2database -->
+            <!-- fastjson -->
             <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2database.version}</version>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.54</version>
+            </dependency>
+
+            <!-- asm -->
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
             </dependency>
 
             <!-- javassist -->
@@ -131,11 +140,11 @@
                 <version>${javassist.version}</version>
             </dependency>
 
-            <!-- asm -->
+            <!-- h2database -->
             <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>${asm.version}</version>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2database.version}</version>
             </dependency>
 
             <!-- zxing(多格式1D/2D图像码处理) -->
@@ -177,10 +186,16 @@
             <artifactId>dom4j</artifactId>
         </dependency>
 
-        <!-- h2database -->
+        <!-- fastjson -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+        <!-- asm -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
         </dependency>
 
         <!-- javassist -->
@@ -189,10 +204,10 @@
             <artifactId>javassist</artifactId>
         </dependency>
 
-        <!-- asm -->
+        <!-- h2database -->
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
         <!-- junit -->
