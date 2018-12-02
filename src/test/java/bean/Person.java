@@ -1,11 +1,9 @@
 package bean;
 
-import java.io.Serializable;
-
 /**
  * @author WuFei
  */
-public class Person implements Serializable {
+public class Person {
 
     private String name;
     private int age;
