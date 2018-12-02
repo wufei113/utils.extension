@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * FFmpeg工具
+ * FFmpeg音频工具
  *
  * @author WuFei
  */
