@@ -1,9 +1,12 @@
 <component name="ProjectDictionaryState">
   <dictionary name="wufei">
     <words>
+      <w>acodec</w>
       <w>bais</w>
       <w>baos</w>
       <w>fastjson</w>
+      <w>ffmpeg</w>
+      <w>fmpeg</w>
       <w>iface</w>
       <w>javaagent</w>
       <w>javap</w>

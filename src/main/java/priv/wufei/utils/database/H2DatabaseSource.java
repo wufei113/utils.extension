@@ -44,9 +44,7 @@ public class H2DatabaseSource implements DataSource {
      */
     private static LinkedList<Connection> pool = new LinkedList<>();
 
-    /*
-     *初始化数据
-     */
+    /*初始化数据*/
     static {
         Properties prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2database-config.properties");
 

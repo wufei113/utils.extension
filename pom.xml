@@ -210,12 +210,6 @@
             <artifactId>h2</artifactId>
         </dependency>
 
-        <!-- junit -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-
         <!-- zxing(多格式1D/2D图像码处理) -->
         <dependency>
             <groupId>com.google.zxing</groupId>
@@ -226,6 +220,12 @@
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
+        </dependency>
+
+        <!-- junit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
         </dependency>
 
     </dependencies>

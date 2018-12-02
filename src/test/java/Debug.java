@@ -1,5 +1,5 @@
+import priv.wufei.utils.audio.FFmpeg;
 import priv.wufei.utils.basis.DateTimeUtils;
-import priv.wufei.utils.json.FastJson;
 
 /**
  * @author WuFei
@@ -10,11 +10,13 @@ public class Debug {
     public static void main(String[] args) {
 
         System.out.println(DateTimeUtils.nanoTimeTimekeeping(() -> {
-            int[] arr = new int[]{1, 2, 3, 4, 5, 6};
-            System.out.println(FastJson.toJSONString(arr));
-
+            String p1 = "C:\\Users\\wufei\\Desktop\\悼锋.mp3";
+            String p2 = "C:\\Users\\wufei\\Desktop\\悼锋.wav";
+            String p3 = "C:\\Users\\wufei\\Desktop\\悼锋.pcm";
+            FFmpeg.mp3ToWav(p1, p2, 44100, 2, "pcm_u8");
         }));
     }
+
 }
 
 

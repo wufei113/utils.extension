@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author WuFei
  */
-public class FastJson {
+public final class FastJson {
 
     /**
      * 不能实例化这个类
