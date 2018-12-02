@@ -1,4 +1,4 @@
-package priv.wufei.utils.graphiccode;
+package priv.wufei.utils.barcode;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
