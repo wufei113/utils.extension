@@ -13,4 +13,5 @@ public class FastJson {
     private FastJson() {
     }
 
+
 }
