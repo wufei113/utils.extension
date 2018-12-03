@@ -13,7 +13,7 @@ import java.util.Properties;
  *
  * @author WuFei
  */
-public class H2DatabaseSource implements DataSource {
+public final class H2DatabaseSource implements DataSource {
 
     /**
      * 创建单例对象

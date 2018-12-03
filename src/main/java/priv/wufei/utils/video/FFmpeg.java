@@ -57,7 +57,6 @@ public final class FFmpeg {
         }
     }
 
-
     /**
      * 获得视频帧率(fps)
      *
@@ -69,7 +68,7 @@ public final class FFmpeg {
         List<String> infos = CmdUtils.execute(FFMPEG + " -i " + videoFilePath);
         /*
          *以下占位符分别表示:
-         *编码格式/视频格式/分辨率/数据速率/帧率/帧率
+         *编码格式/像素格式/分辨率/数据速率/帧率/帧率
          *tbr一般被当成帧率。当视频的码率为固定码率时，FFmpeg显示tbr为正常的码率值。当视频有变长码率时，FFmpeg打印的tbr为多个码率的均值
          */
         String regexVideo = "Video: (.*?), (.*?), (.*?), (\\d*) kb/s, (.*?) fps, (.*?) tbr[,\\s]";
@@ -89,19 +88,19 @@ public final class FFmpeg {
      * 视频转换为png图像序列(从头到尾逐帧截图)
      *
      * @param videoFilePath 输入视频磁盘路径
-     * @param outPicDir     截取的图片的磁盘保存路径(文件夹)
+     * @param outPicDirPath 截取的图片的磁盘保存路径(文件夹)
      * @return 输出信息 {@link List}集合
      */
-    public static List<String> toPngSequence(String videoFilePath, String outPicDir) {
+    public static List<String> toPngSequence(String videoFilePath, String outPicDirPath) {
 
-        return toPngSequence(videoFilePath, outPicDir, -1, "0", null);
+        return toPngSequence(videoFilePath, outPicDirPath, -1, "0", null);
     }
 
     /**
      * 视频转换为png图像序列
      *
      * @param videoFilePath 输入视频磁盘路径
-     * @param outPicDir     截取的图片的磁盘保存路径(文件夹)
+     * @param outPicDirPath 截取的图片的磁盘保存路径(文件夹)
      * @param rate          每秒截取的帧速率<br>
      *                      有效范围(0,30]，超出取默认fps
      * @param timeOff       开始时间(单位:秒)，hh:mm:ss[.xxx]的格式也支持
@@ -110,7 +109,7 @@ public final class FFmpeg {
      * @return 输出信息 {@link List}集合
      */
     public static List<String> toPngSequence(String videoFilePath,
-                                             String outPicDir,
+                                             String outPicDirPath,
                                              double rate,
                                              String timeOff,
                                              String duration) {
@@ -126,7 +125,7 @@ public final class FFmpeg {
         int numberOfDigits = NumberUtils.getNumberOfDigits(amount);
 
         //图像输出路径
-        File outFolder = new File(outPicDir);
+        File outFolder = new File(outPicDirPath);
         //文件夹不存在，创建
         if (!outFolder.exists()) {
             outFolder.mkdirs();
@@ -146,7 +145,7 @@ public final class FFmpeg {
         commands.add("-f");       //指定格式(音频或视频格式)
         commands.add("image2");
         commands.add("-t");       //持续时长(s)，hh:mm:ss[.xxx]的格式也支持
-        commands.add(StringUtils.isNotEmpty(duration) ? duration : totalTime + "");
+        commands.add(StringUtils.isNotBlank(duration) ? duration : totalTime + "");
         //用指定位数的数字自动从小到大生成文件名
         commands.add(outDir + "%" + numberOfDigits + "d.png");
 
@@ -159,13 +158,19 @@ public final class FFmpeg {
      * @param videoFilePath 输入图片磁盘路径表达式(例如:C:/images/%04d.png)
      * @param outFilePath   视频磁盘输出路径
      * @param rate          合成一秒所需的图片数
-     * @param codec         强制使用codec编解码方式[hevc/h264/mpeg4],null为默认
+     * @param codec         强制使用{@code codec}编解码方式<br>
+     *                      null为ffmpeg默认<br>
+     *                      [hevc,libx265,h264,libx264,mpeg4]
+     * @param format        强制使用{@code format}像素格式<br>
+     *                      null为ffmpeg默认<br>
+     *                      [yuv420p]
      * @return 输出信息 {@link List}集合
      */
     public static List<String> imageSequenceComposite(String videoFilePath,
                                                       String outFilePath,
                                                       double rate,
-                                                      String codec) {
+                                                      String codec,
+                                                      String format) {
 
         List<String> commands = new ArrayList<>();
 
@@ -178,16 +183,23 @@ public final class FFmpeg {
         }
 
         commands.add(FFMPEG);
-        commands.add("-y");         //将覆盖已存在的文件
-        commands.add("-r");         //设置帧速率(单位:秒)
+        commands.add("-y");           //将覆盖已存在的文件
+        commands.add("-r");           //设置帧速率(单位:秒)
         commands.add(rate + "");
-        commands.add("-i");         //输入的文件
+        commands.add("-i");           //输入的文件
         commands.add(videoFilePath);
-        if (StringUtils.isNotEmpty(codec)) {
-            commands.add("-vcodec");//强制使用codec编解码方式 hevc/h264/mpeg4
+
+        if (StringUtils.isNotBlank(codec)) {
+            commands.add("-vcodec");  //解码方式
             commands.add(codec);
         }
-        commands.add(outFilePath);  //输出路径
+
+        if (StringUtils.isNotBlank(format)) {
+            commands.add("-pix_fmt"); //像素格式
+            commands.add(format);
+        }
+
+        commands.add(outFilePath);    //输出路径
 
         return CmdUtils.execute(commands);
     }

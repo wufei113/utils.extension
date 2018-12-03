@@ -25,7 +25,7 @@ import java.util.concurrent.Executor;
  *
  * @author WuFei
  */
-public class ConnectionWrapper implements Connection {
+public final class ConnectionWrapper implements Connection {
 
     /**
      * 被装饰的连接
