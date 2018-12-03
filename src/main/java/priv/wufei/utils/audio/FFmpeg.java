@@ -3,6 +3,7 @@ package priv.wufei.utils.audio;
 import priv.wufei.utils.basis.CmdUtils;
 import priv.wufei.utils.basis.PropertiesUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -23,7 +24,7 @@ public final class FFmpeg {
 
     /*加载ffmpeg环境*/
     static {
-        Properties props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/application.properties");
+        Properties props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
 
         FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
     }
@@ -33,32 +34,32 @@ public final class FFmpeg {
      *
      * @param mp3FilePath 输入mp3磁盘路径
      * @param wavFilePath 输出wav磁盘路径
-     * @param frequency   采样频率[8000，11025，16000，22050，44100]
+     * @param rate        采样频率[8000，11025，16000，22050，44100]
      * @param channels    声道数[1，2]
-     * @param pcmFormat   编码方案[pcm_u8，pcm_s16le ，pcm_s16be，pcm_u16le，pcm_u16be]
+     * @param codec       音频编码方案[pcm_u8，pcm_s16le ，pcm_s16be，pcm_u16le，pcm_u16be]
      * @return 输出信息 {@link List}集合
      */
     public static List<String> mp3ToWav(String mp3FilePath,
                                         String wavFilePath,
-                                        int frequency,
+                                        int rate,
                                         int channels,
-                                        String pcmFormat) {
+                                        String codec) {
 
-        StringBuffer command = new StringBuffer();
+        List<String> commands = new ArrayList<>();
 
-        command.append(FFMPEG);
-        command.append(" -i ");       //输入的文件
-        command.append(mp3FilePath);
-        command.append(" -ar ");      //设置音频的采样频率
-        command.append(frequency);
-        command.append(" -ac ");      //设置声道数
-        command.append(channels);
-        command.append(" -acodec ");  //音频编码方案
-        command.append(pcmFormat);
-        command.append(" -y ");       //将覆盖已存在的文件
-        command.append(wavFilePath);
+        commands.add(FFMPEG);
+        commands.add("-y");       //将覆盖已存在的文件
+        commands.add("-i");       //输入的文件
+        commands.add(mp3FilePath);
+        commands.add("-ar");      //设置音频的采样频率(单位:秒)
+        commands.add(rate + "");
+        commands.add("-ac");      //设置声道数
+        commands.add(channels + "");
+        commands.add("-acodec");  //音频编码方案
+        commands.add(codec);
+        commands.add(wavFilePath);
 
-        return CmdUtils.execute(String.valueOf(command));
+        return CmdUtils.execute(commands);
     }
 
 }

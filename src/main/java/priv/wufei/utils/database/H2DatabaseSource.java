@@ -46,7 +46,7 @@ public class H2DatabaseSource implements DataSource {
 
     /*初始化数据*/
     static {
-        Properties prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2database-config.properties");
+        Properties prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2-config.properties");
 
         driverClassName = PropertiesUtils.getString(prop, "driverClassName");
         url = PropertiesUtils.getString(prop, "url");

@@ -7,12 +7,16 @@
       <w>fastjson</w>
       <w>ffmpeg</w>
       <w>fmpeg</w>
+      <w>hevc</w>
       <w>iface</w>
       <w>javaagent</w>
       <w>javap</w>
       <w>javase</w>
       <w>jvms</w>
+      <w>mpeg</w>
       <w>priv</w>
+      <w>vcodec</w>
+      <w>vframes</w>
       <w>wufei</w>
       <w>zxing</w>
     </words>
