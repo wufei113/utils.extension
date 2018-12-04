@@ -28,8 +28,9 @@ public final class RenameTools {
      * 文件倒序重命名
      *
      * @param dirPath 存放要重命名文件的文件夹的磁盘路径
+     * @throws Exception Exception
      */
-    public static void reverseSort(String dirPath) {
+    public static void reverseSort(String dirPath) throws Exception {
 
         var diffTime = DateTimeUtils.nanoTimeTimekeeping(() -> {
 

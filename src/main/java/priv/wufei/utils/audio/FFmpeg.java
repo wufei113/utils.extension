@@ -24,7 +24,15 @@ public final class FFmpeg {
 
     /*加载ffmpeg环境*/
     static {
-        Properties props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
+        Properties props = null;
+
+        try {
+            props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assert props != null;
 
         FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
     }
@@ -38,12 +46,13 @@ public final class FFmpeg {
      * @param channels    声道数[1，2]
      * @param codec       音频编码方案[pcm_u8，pcm_s16le ，pcm_s16be，pcm_u16le，pcm_u16be]
      * @return 输出信息 {@link List}集合
+     * @throws Exception Exception
      */
     public static List<String> mp3ToWav(String mp3FilePath,
                                         String wavFilePath,
                                         int rate,
                                         int channels,
-                                        String codec) {
+                                        String codec) throws Exception {
 
         List<String> commands = new ArrayList<>();
 

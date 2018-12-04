@@ -28,8 +28,9 @@ public final class Dom4j {
      *
      * @param srcFilePath 输入xml文件路径
      * @param diy         对根节点的自定义操作
+     * @throws Exception Exception
      */
-    public static void parse(String srcFilePath, OneConsumer<Element> diy) {
+    public static void parse(String srcFilePath, OneConsumer<Element> diy) throws Exception {
 
         parse(new File(srcFilePath), diy);
     }
@@ -39,22 +40,18 @@ public final class Dom4j {
      *
      * @param srcFile 输入xml文件
      * @param diy     对根节点的自定义操作
+     * @throws Exception Exception
      */
-    public static void parse(File srcFile, OneConsumer<Element> diy) {
+    public static void parse(File srcFile, OneConsumer<Element> diy) throws Exception {
 
-        try {
-            // 创建SAXReader的对象reader
-            SAXReader reader = new SAXReader();
-            // 通过reader对象的read方法加载.xml文件,获取document对象。
-            Document document = reader.read(srcFile);
-            // 通过document对象获取根节点
-            Element root = document.getRootElement();
+        // 创建SAXReader的对象reader
+        SAXReader reader = new SAXReader();
+        // 通过reader对象的read方法加载.xml文件,获取document对象。
+        Document document = reader.read(srcFile);
+        // 通过document对象获取根节点
+        Element root = document.getRootElement();
 
-            diy.accept(root);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        diy.accept(root);
     }
 
     /**

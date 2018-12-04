@@ -46,7 +46,15 @@ public final class H2DatabaseSource implements DataSource {
 
     /*初始化数据*/
     static {
-        Properties prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2-config.properties");
+        Properties prop = null;
+
+        try {
+            prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2-config.properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assert prop != null;
 
         driverClassName = PropertiesUtils.getString(prop, "driverClassName");
         url = PropertiesUtils.getString(prop, "url");
@@ -55,16 +63,14 @@ public final class H2DatabaseSource implements DataSource {
         corePoolSize = PropertiesUtils.getInt(prop, "corePoolSize");
     }
 
-    private H2DatabaseSource() {
-
-        try {
-            //加载驱动
-            Class.forName(driverClassName);
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
+    /**
+     * 单例模式
+     *
+     * @throws Exception Exception
+     */
+    private H2DatabaseSource() throws Exception {
+        //加载驱动
+        Class.forName(driverClassName);
         //初始化数据池
         for (int i = 0; i < corePoolSize; i++) {
 
@@ -76,8 +82,9 @@ public final class H2DatabaseSource implements DataSource {
      * 获得{@link H2DatabaseSource}单例对象
      *
      * @return {@link H2DatabaseSource}
+     * @throws Exception Exception
      */
-    public static H2DatabaseSource getInstance() {
+    public static H2DatabaseSource getInstance() throws Exception {
 
         if (h2DatabaseSource == null) {
 
@@ -94,29 +101,27 @@ public final class H2DatabaseSource implements DataSource {
 
     /**
      * 创建连接
+     *
+     * @throws SQLException SQLException
      */
-    private void createConnection() {
+    private void createConnection() throws SQLException {
 
-        try {
-            //获取连接
-            Connection conn = DriverManager.getConnection(url, username, password);
-            //进行装饰
-            ConnectionWrapper wrapper = new ConnectionWrapper(conn, pool, this);
+        //获取连接
+        Connection conn = DriverManager.getConnection(url, username, password);
+        //进行装饰
+        ConnectionWrapper wrapper = new ConnectionWrapper(conn, pool, this);
 
-            pool.add(wrapper);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        pool.add(wrapper);
     }
 
     /**
      * 获取连接
      *
      * @return {@link Connection}
+     * @throws SQLException SQLException
      */
     @Override
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
 
         Connection conn;
 
@@ -131,27 +136,24 @@ public final class H2DatabaseSource implements DataSource {
 
     /**
      * 关闭连接池
+     *
+     * @throws SQLException SQLException
      */
     @Override
-    public void close() {
+    public void close() throws SQLException {
 
-        try {
+        int size = pool.size();
 
-            int size = pool.size();
+        for (int i = 0; i < size; i++) {
 
-            for (int i = 0; i < size; i++) {
+            Connection conn = pool.removeFirst();
 
-                Connection conn = pool.removeFirst();
+            ConnectionWrapper wrapper = (ConnectionWrapper) conn;
 
-                ConnectionWrapper wrapper = (ConnectionWrapper) conn;
+            if (!wrapper.isClosed()) {
 
-                if (!wrapper.isClosed()) {
-
-                    wrapper.closeConnection();
-                }
+                wrapper.closeConnection();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

@@ -43,8 +43,9 @@ public final class QRCode {
      * @param content 存储内容
      * @param size    二维码尺寸
      * @return {@link BufferedImage}
+     * @throws WriterException WriterException
      */
-    public static BufferedImage write(String content, int size) {
+    public static BufferedImage write(String content, int size) throws WriterException {
 
         return write(content, size, Color.BLACK, Color.WHITE);
     }
@@ -57,40 +58,38 @@ public final class QRCode {
      * @param highColor 高于平均值的颜色
      * @param lowColor  低于平均值的颜色
      * @return {@link BufferedImage}
+     * @throws WriterException WriterException
      */
-    public static BufferedImage write(String content, int size, Color highColor, Color lowColor) {
+    public static BufferedImage write(String content, int size, Color highColor, Color lowColor) throws WriterException {
 
         //高于平均值的rgb
         int high = highColor.getRGB();
         //底于平均值的rgb
         int low = lowColor.getRGB();
 
-        BufferedImage image = null;
+        BufferedImage image;
 
-        try {
-            image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-            //定义二维码的参数
-            Map<EncodeHintType, Object> hints = new HashMap<>(8);
-            //设置编码
-            hints.put(EncodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
-            //设置纠错等级
-            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-            //四边空白区域大小
-            hints.put(EncodeHintType.MARGIN, 1);
+        image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        //定义二维码的参数
+        Map<EncodeHintType, Object> hints = new HashMap<>(8);
+        //设置编码
+        hints.put(EncodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
+        //设置纠错等级
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        //四边空白区域大小
+        hints.put(EncodeHintType.MARGIN, 1);
 
-            //生成二维码
-            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-            BitMatrix bitMatrix = multiFormatWriter.encode(content, BarcodeFormat.QR_CODE, size, size, hints);
+        //生成二维码
+        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+        BitMatrix bitMatrix = multiFormatWriter.encode(content, BarcodeFormat.QR_CODE, size, size, hints);
 
-            for (int x = 0; x < size; x++) {
-                for (int y = 0; y < size; y++) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
 
-                    image.setRGB(x, y, bitMatrix.get(x, y) ? high : low);
-                }
+                image.setRGB(x, y, bitMatrix.get(x, y) ? high : low);
             }
-        } catch (WriterException e) {
-            e.printStackTrace();
         }
+
         return image;
     }
 
@@ -101,8 +100,9 @@ public final class QRCode {
      * @param size         二维码尺寸
      * @param logoFilePath logo图片磁盘路径
      * @return {@link BufferedImage}
+     * @throws Exception Exception
      */
-    public static BufferedImage write(String content, int size, String logoFilePath) {
+    public static BufferedImage write(String content, int size, String logoFilePath) throws Exception {
 
         BufferedImage matrixImage = write(content, size);
 
@@ -115,8 +115,9 @@ public final class QRCode {
      * @param matrixImage  源二维码图片
      * @param logoFilePath logo图片磁盘路径
      * @return 返回带有logo的二维码图片
+     * @throws Exception Exception
      */
-    private static BufferedImage setLogo(BufferedImage matrixImage, String logoFilePath) {
+    private static BufferedImage setLogo(BufferedImage matrixImage, String logoFilePath) throws Exception {
 
         int width = matrixImage.getWidth();
         int height = matrixImage.getHeight();
@@ -157,33 +158,25 @@ public final class QRCode {
      *
      * @param image 二维码图片
      * @return 二维码储存的信息
+     * @throws NotFoundException NotFoundException
      */
-    public static String read(BufferedImage image) {
+    public static String read(BufferedImage image) throws NotFoundException {
+        //定义二维码解码参数
+        Map<DecodeHintType, Object> hints = new HashMap<>(4);
+        //设置编码
+        hints.put(DecodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
+        //花更多的时间用于寻找图上的编码，优化准确性，但不优化速度
+        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
-        String text = null;
+        //解析
+        BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(image);
+        HybridBinarizer hybridBinarizer = new HybridBinarizer(source);
+        BinaryBitmap binaryBitmap = new BinaryBitmap(hybridBinarizer);
+        //读取二维码结果
+        MultiFormatReader multiFormatReader = new MultiFormatReader();
+        Result result = multiFormatReader.decode(binaryBitmap, hints);
 
-        try {
-            //定义二维码解码参数
-            Map<DecodeHintType, Object> hints = new HashMap<>(4);
-            //设置编码
-            hints.put(DecodeHintType.CHARACTER_SET, LanguageEncode.UTF8.getEncode());
-            //花更多的时间用于寻找图上的编码，优化准确性，但不优化速度
-            hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
-
-            //解析
-            BufferedImageLuminanceSource source = new BufferedImageLuminanceSource(image);
-            HybridBinarizer hybridBinarizer = new HybridBinarizer(source);
-            BinaryBitmap binaryBitmap = new BinaryBitmap(hybridBinarizer);
-            //读取二维码结果
-            MultiFormatReader multiFormatReader = new MultiFormatReader();
-            Result result = multiFormatReader.decode(binaryBitmap, hints);
-
-            text = result.getText();
-
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-        return text;
+        return result.getText();
     }
 
 }

@@ -26,10 +26,17 @@ public final class FFmpeg {
     private FFmpeg() {
     }
 
-
     /*加载ffmpeg环境*/
     static {
-        Properties props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
+        Properties props = null;
+
+        try {
+            props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assert props != null;
 
         FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
     }
@@ -39,8 +46,9 @@ public final class FFmpeg {
      *
      * @param videoFilePath 输入视频磁盘路径
      * @return 时长
+     * @throws Exception Exception
      */
-    public static double getTotalTime(String videoFilePath) {
+    public static double getTotalTime(String videoFilePath) throws Exception {
 
         List<String> infos = CmdUtils.execute(FFMPEG + " -i " + videoFilePath);
         //从视频信息中解析时长
@@ -62,8 +70,9 @@ public final class FFmpeg {
      *
      * @param videoFilePath 输入视频磁盘路径
      * @return 帧率(fps)
+     * @throws Exception Exception
      */
-    public static double getFPS(String videoFilePath) {
+    public static double getFPS(String videoFilePath) throws Exception {
 
         List<String> infos = CmdUtils.execute(FFMPEG + " -i " + videoFilePath);
         /*
@@ -90,8 +99,9 @@ public final class FFmpeg {
      * @param videoFilePath 输入视频磁盘路径
      * @param outPicDirPath 截取的图片的磁盘保存路径(文件夹)
      * @return 输出信息 {@link List}集合
+     * @throws Exception Exception
      */
-    public static List<String> toPngSequence(String videoFilePath, String outPicDirPath) {
+    public static List<String> toPngSequence(String videoFilePath, String outPicDirPath) throws Exception {
 
         return toPngSequence(videoFilePath, outPicDirPath, -1, "0", null);
     }
@@ -107,12 +117,13 @@ public final class FFmpeg {
      * @param duration      持续截取的时长(s)，hh:mm:ss[.xxx]的格式也支持<br>
      *                      如果为null,表示取视频总时长
      * @return 输出信息 {@link List}集合
+     * @throws Exception Exception
      */
     public static List<String> toPngSequence(String videoFilePath,
                                              String outPicDirPath,
                                              double rate,
                                              String timeOff,
-                                             String duration) {
+                                             String duration) throws Exception {
 
         if (rate <= 0 || rate > 30) {
             rate = getFPS(videoFilePath);
@@ -165,12 +176,13 @@ public final class FFmpeg {
      *                      null为ffmpeg默认<br>
      *                      [yuv420p]
      * @return 输出信息 {@link List}集合
+     * @throws Exception Exception
      */
     public static List<String> imageSequenceComposite(String videoFilePath,
                                                       String outFilePath,
                                                       double rate,
                                                       String codec,
-                                                      String format) {
+                                                      String format) throws Exception {
 
         List<String> commands = new ArrayList<>();
 

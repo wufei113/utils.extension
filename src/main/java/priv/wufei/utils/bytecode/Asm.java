@@ -7,11 +7,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import priv.wufei.utils.basis.ReflectUtils;
-import priv.wufei.utils.basis.function.OneConsumer;
-import priv.wufei.utils.basis.function.TwoFunction;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * ASM字节码工具
@@ -124,7 +123,7 @@ public final class Asm {
      */
     public static ClassVisitor methodProxy(ClassVisitor classVisitor,
                                            Method method,
-                                           TwoFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
+                                           BiFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
 
         //方法名
         final String methodName = method.getName();
@@ -136,19 +135,13 @@ public final class Asm {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
-                try {
-                    MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
-                    //寻找指定名称的方法
-                    if (methodName.equals(name) && descriptor.equals(desc)) {
+                MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
+                //寻找指定名称的方法
+                if (methodName.equals(name) && descriptor.equals(desc)) {
 
-                        return diy.apply(this, mv);
-                    }
-                    return mv;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    return diy.apply(this, mv);
                 }
-                return null;
+                return mv;
             }
         };
     }
@@ -164,26 +157,20 @@ public final class Asm {
      */
     public static ClassVisitor methodProxy(ClassVisitor classVisitor,
                                            boolean isConstructorProxy,
-                                           TwoFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
+                                           BiFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
 
         return new ClassVisitor(API, classVisitor) {
 
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
-                try {
-                    MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
+                MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
-                    if (isConstructorProxy || !CONSTRUCTOR_SIGN.equals(name)) {
+                if (isConstructorProxy || !CONSTRUCTOR_SIGN.equals(name)) {
 
-                        return diy.apply(this, mv);
-                    }
-                    return mv;
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    return diy.apply(this, mv);
                 }
-                return null;
+                return mv;
             }
         };
     }
@@ -229,8 +216,8 @@ public final class Asm {
      * @return 进行操作后的 {@link MethodVisitor} 对象
      */
     public static MethodVisitor methodProxyOperate(MethodVisitor methodVisitor,
-                                                   OneConsumer<MethodVisitor> methodBefore,
-                                                   OneConsumer<MethodVisitor> methodAfter) {
+                                                   Consumer<MethodVisitor> methodBefore,
+                                                   Consumer<MethodVisitor> methodAfter) {
 
         return new MethodVisitor(API, methodVisitor) {
 
@@ -239,12 +226,9 @@ public final class Asm {
              */
             @Override
             public void visitCode() {
-                try {
-                    //前拦截
-                    methodBefore.accept(this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //前拦截
+                methodBefore.accept(this);
+
                 super.visitCode();
             }
 
@@ -260,13 +244,8 @@ public final class Asm {
                 boolean b2 = opcode == Opcodes.ATHROW;
 
                 if (b1 || b2) {
-                    try {
-                        //后拦截
-                        methodAfter.accept(this);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    //后拦截
+                    methodAfter.accept(this);
                 }
                 super.visitInsn(opcode);
             }
@@ -284,49 +263,43 @@ public final class Asm {
      * @param methodAfter    后拦截方法(必须是静态方法)
      * @param methodName     进行代理的方法名
      * @param parameterTypes 方法形参类型数组
+     * @param <T>            原始类类型
      * @return 新构建的class文件的二进制数组
+     * @throws Exception Exception
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> proxyExample(Class<T> clz,
                                             Method methodBefore,
                                             Method methodAfter,
                                             String methodName,
-                                            Class<?>... parameterTypes) {
+                                            Class<?>... parameterTypes) throws Exception {
 
-        Class childClass = null;
+        Method method = clz.getDeclaredMethod(methodName, parameterTypes);
 
-        try {
-            Method method = clz.getDeclaredMethod(methodName, parameterTypes);
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        //改为被代理的子类
+        ClassVisitor cv1 = changeToChildClass(cw);
+        //对指定方法进行代理
+        ClassVisitor cv2 = methodProxy(cv1, method,
+                (classVisitor, methodVisitor) -> methodProxyOperate(methodVisitor,
+                        (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodBefore.getDeclaringClass().getTypeName(),
+                                methodBefore.getName(), Type.getMethodDescriptor(methodBefore), false),
+                        (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodAfter.getDeclaringClass().getTypeName(),
+                                methodAfter.getName(), Type.getMethodDescriptor(methodAfter), false)));
 
-            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-            //改为被代理的子类
-            ClassVisitor cv1 = changeToChildClass(cw);
-            //对指定方法进行代理
-            ClassVisitor cv2 = methodProxy(cv1, method,
-                    (classVisitor, methodVisitor) -> methodProxyOperate(methodVisitor,
-                            (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodBefore.getDeclaringClass().getTypeName(),
-                                    methodBefore.getName(), Type.getMethodDescriptor(methodBefore), false),
-                            (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodAfter.getDeclaringClass().getTypeName(),
-                                    methodAfter.getName(), Type.getMethodDescriptor(methodAfter), false)));
+        String parentClassName = clz.getTypeName();
+        /*
+         * ClassReader 将class解析成byte 数组
+         * 然后会通过accept方法去按顺序调用绑定对象（继承了ClassVisitor的实例）的方法
+         * 可以视为一个事件的生产者
+         */
+        ClassReader cr = new ClassReader(parentClassName);
 
-            String parentClassName = clz.getTypeName();
-            /*
-             * ClassReader 将class解析成byte 数组
-             * 然后会通过accept方法去按顺序调用绑定对象（继承了ClassVisitor的实例）的方法
-             * 可以视为一个事件的生产者
-             */
-            ClassReader cr = new ClassReader(parentClassName);
+        cr.accept(cv2, API);
 
-            cr.accept(cv2, API);
+        byte[] bytes = cw.toByteArray();
 
-            byte[] bytes = cw.toByteArray();
-
-            childClass = ReflectUtils.defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
-
-        } catch (IOException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return childClass;
+        return (Class<T>) ReflectUtils.defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
     }
 
 }

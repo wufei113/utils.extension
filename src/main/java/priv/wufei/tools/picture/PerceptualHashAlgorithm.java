@@ -42,24 +42,29 @@ public final class PerceptualHashAlgorithm {
      *
      * @param px           缩略图宽高
      * @param srcImageFile 文件
+     * @return int[]
      */
     protected static int[] getFingerprint(int px, File srcImageFile) {
-        //获取图像
-        BufferedImage image = ImageUtils.createBufferedImage(srcImageFile);
-        //判断是不是图像,不是继续操作,否则返回null
-        if (null != image) {
-            //缩小成px乘px的缩略图
-            image = ImageUtils.scale(image, px, px);
-            //转换至灰度
-            image = ImageUtils.changeColorSpace(image, ColorSpace.CS_GRAY, null);
-            //获取灰度像素数组
-            int[] pixels = image.getRGB(0, 0, px, px, null, 0, px);
-            //获取平均灰度颜色
-            int averageColor = getAverageOfPixelArray(pixels);
-            //获取灰度像素的比较数组（即图像指纹序列）
-            pixels = getPixelDeviateWeightsArray(pixels, averageColor);
+        try {
+            //获取图像
+            BufferedImage image = ImageUtils.createBufferedImage(srcImageFile);
+            //判断是不是图像,不是继续操作,否则返回null
+            if (null != image) {
+                //缩小成px乘px的缩略图
+                image = ImageUtils.scale(image, px, px);
+                //转换至灰度
+                image = ImageUtils.changeColorSpace(image, ColorSpace.CS_GRAY, null);
+                //获取灰度像素数组
+                int[] pixels = image.getRGB(0, 0, px, px, null, 0, px);
+                //获取平均灰度颜色
+                int averageColor = getAverageOfPixelArray(pixels);
+                //获取灰度像素的比较数组（即图像指纹序列）
+                pixels = getPixelDeviateWeightsArray(pixels, averageColor);
 
-            return pixels;
+                return pixels;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -95,6 +100,10 @@ public final class PerceptualHashAlgorithm {
 
     /**
      * 获取两个缩略图的平均像素比较数组的汉明距离（距离越大差异越大）
+     *
+     * @param a 第一个缩略图的平均像素数组
+     * @param b 第二个缩略图的平均像素数组
+     * @return int
      */
     protected static int getHammingDistance(int[] a, int[] b) {
 
@@ -108,6 +117,10 @@ public final class PerceptualHashAlgorithm {
 
     /**
      * 通过汉明距离计算相似度
+     *
+     * @param px              缩略图宽高
+     * @param hammingDistance 汉明距离
+     * @return double
      */
     protected static double calSimilarity(int px, int hammingDistance) {
 

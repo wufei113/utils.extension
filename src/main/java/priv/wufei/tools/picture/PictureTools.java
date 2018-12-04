@@ -25,12 +25,13 @@ public final class PictureTools {
     }
 
     /**
-     * 图像相似度识别（最佳用途：根据缩略图，找出原图）（感知哈希算法）<br/>
+     * 图像相似度识别（最佳用途：根据缩略图，找出原图）（感知哈希算法）<br>
      * 相似图像加前缀 "_similar__"以示区别
      *
      * @param srcDirPath 要处理的文件夹路径(最好只有一级目录)
+     * @throws Exception Exception
      */
-    public static void imageSimilarityRecognition(String srcDirPath) {
+    public static void imageSimilarityRecognition(String srcDirPath) throws Exception {
 
         var diffTime = DateTimeUtils.nanoTimeTimekeeping(() -> {
 
