@@ -14,16 +14,16 @@ import priv.wufei.utils.basis.ReflectUtils;
 public final class Javassist {
 
     /**
-     * 不能实例化这个类
-     */
-    private Javassist() {
-    }
-
-    /**
      * 作为子类时的标志<br>
      * 必须"$"打头
      */
     public static final String CHILD_CLASS_SIGN = "$Proxy";
+
+    /**
+     * 不能实例化这个类
+     */
+    private Javassist() {
+    }
 
     /**
      * <p>

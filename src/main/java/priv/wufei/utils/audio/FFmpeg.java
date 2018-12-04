@@ -16,12 +16,6 @@ public final class FFmpeg {
 
     private static final String FFMPEG;
 
-    /**
-     * 不能实例化这个类
-     */
-    private FFmpeg() {
-    }
-
     /*加载ffmpeg环境*/
     static {
         Properties props = null;
@@ -35,6 +29,12 @@ public final class FFmpeg {
         assert props != null;
 
         FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
+    }
+
+    /**
+     * 不能实例化这个类
+     */
+    private FFmpeg() {
     }
 
     /**

@@ -20,12 +20,6 @@ import java.util.function.Consumer;
 public final class Asm {
 
     /**
-     * 不能实例化这个类
-     */
-    private Asm() {
-    }
-
-    /**
      * ASM版本
      */
     public static final int API = Opcodes.ASM7;
@@ -38,6 +32,11 @@ public final class Asm {
      * 必须"$"打头
      */
     public static final String CHILD_CLASS_SIGN = "$Proxy";
+    /**
+     * 不能实例化这个类
+     */
+    private Asm() {
+    }
 
     /**
      * 将动态生成类改造成原始类的子类<br>
