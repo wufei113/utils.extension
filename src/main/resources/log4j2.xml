@@ -10,7 +10,10 @@
         <property name="LOG_HOME">${sys:user.dir}</property>
         <!-- 日志文件名为当前日期 -->
         <property name="FILE_NAME">$${date:yyyy-MM-dd}</property>
-        <property name="RollingFile_size">10MB</property>
+        <!-- 日志文件到开始压缩的阈值 -->
+        <property name="SizeBasedTriggeringPolicy">10MB</property>
+        <!-- 压缩文件回滚阈值,log4j2默认为3 -->
+        <property name="DefaultRolloverStrategy">3</property>
     </properties>
 
     <appenders>
@@ -49,10 +52,10 @@
                 -->
                 <TimeBasedTriggeringPolicy/>
                 <!-- 大小阀值 -->
-                <SizeBasedTriggeringPolicy size="${RollingFile_size}"/>
+                <SizeBasedTriggeringPolicy size="${SizeBasedTriggeringPolicy}"/>
             </Policies>
             <!-- 压缩文件回滚策略,删除最旧的文件 -->
-            <DefaultRolloverStrategy max="3"/>
+            <DefaultRolloverStrategy max="${DefaultRolloverStrategy}"/>
         </RollingFile>
 
         <!-- 文件 -->
