@@ -2,11 +2,12 @@
 <!-- javase: log4j2.xml放在项目根目录下(maven环境:resources下面) -->
 
 <!-- status为不记录log4j本身的日志 -->
-<configuration status="OFF">
+<!-- monitorInterval每隔一段时间就会检查一遍这个文件是否修改。最小是5s -->
+<configuration status="OFF" monitorInterval="30">
 
     <properties>
-        <!-- 日志目录 -->
-        <property name="LOG_HOME">C:/Users/wufei/Desktop</property>
+        <!-- 日志目录为项目目录 -->
+        <property name="LOG_HOME">${sys:user.dir}</property>
         <!-- 日志文件名为当前日期 -->
         <property name="FILE_NAME">$${date:yyyy-MM-dd}</property>
         <property name="RollingFile_size">10MB</property>
@@ -14,9 +15,10 @@
 
     <appenders>
         <!-- 控制台 -->
-        <!-- SYSTEM_OUT :日志输出到系统标准输出设备(控制台)上-->
+        <!-- SYSTEM_OUT | SYSTEM_ERR :日志输出到系统标准|错误输出设备(控制台)上-->
         <Console name="Console" target="SYSTEM_OUT">
             <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <!-- 过滤条件有三个值：ACCEPT(接受), DENY(拒绝), NEUTRAL(中立) -->
             <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 输出格式 -->
             <!-- %d{HH:mm:ss.SSS} :格式化时间 -->
@@ -39,8 +41,18 @@
             <!-- %L         :行号 -->
             <!-- %M         :方法名 -->
             <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss} %-5level %class{36} %L %M - %msg%n"/>
-            <!-- 阀值 -->
-            <SizeBasedTriggeringPolicy size="${RollingFile_size}"/>
+            <Policies>
+                <!-- 时间阈值 -->
+                <!--
+                  TimeBasedTriggeringPolicy中有其中一个参数是interval，表示多久滚动一次。默认是1 hour。
+                  参数modulate=true用来调整时间：比如现在是早上3am，interval是4，那么第一次滚动是在4am，接着是8am，12am...而不是7am
+                -->
+                <TimeBasedTriggeringPolicy/>
+                <!-- 大小阀值 -->
+                <SizeBasedTriggeringPolicy size="${RollingFile_size}"/>
+            </Policies>
+            <!-- 压缩文件回滚策略,删除最旧的文件 -->
+            <DefaultRolloverStrategy max="3"/>
         </RollingFile>
 
         <!-- 文件 -->
