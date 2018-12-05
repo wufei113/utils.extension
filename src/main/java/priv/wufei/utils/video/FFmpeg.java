@@ -125,7 +125,10 @@ public final class FFmpeg {
                                              String timeOff,
                                              String duration) throws Exception {
 
-        if (rate <= 0 || rate > 30) {
+        //视频支持的最大帧速率
+        double maxFps = 30;
+
+        if (rate <= 0 || rate > maxFps) {
             rate = getFPS(videoFilePath);
         }
 

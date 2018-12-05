@@ -1,22 +1,29 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import priv.wufei.utils.basis.DateTimeUtils;
+import priv.wufei.utils.basis.FileUtils;
 
 /**
  * @author WuFei
  */
 
 public class Debug {
+    static Logger logger = LogManager.getLogger(Debug.class);
 
     public static void main(String[] args) {
 
+
         try {
             System.out.println(DateTimeUtils.nanoTimeTimekeeping(() -> {
-                System.out.println(String.format("我是%s", "神"));
-                System.out.println(11);
+
+                FileUtils.getProjectPathOfJAR(int.class);
+
             }));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
+
 
 }
 

@@ -2,6 +2,7 @@
   <dictionary name="wufei">
     <words>
       <w>acodec</w>
+      <w>appenders</w>
       <w>bais</w>
       <w>baos</w>
       <w>fastjson</w>

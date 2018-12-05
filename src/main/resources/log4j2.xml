@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- javase: log4j2.xml放在项目根目录下(maven环境:resources下面) -->
+
+<!-- status为不记录log4j本身的日志 -->
+<configuration status="OFF">
+
+    <properties>
+        <!-- 日志目录 -->
+        <property name="LOG_HOME">C:/Users/wufei/Desktop</property>
+        <!-- 日志文件名为当前日期 -->
+        <property name="FILE_NAME">$${date:yyyy-MM-dd}</property>
+        <property name="RollingFile_size">10MB</property>
+    </properties>
+
+    <appenders>
+        <!-- 控制台 -->
+        <!-- SYSTEM_OUT :日志输出到系统标准输出设备(控制台)上-->
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 输出格式 -->
+            <!-- %d{HH:mm:ss.SSS} :格式化时间 -->
+            <!-- %t               :thread，产生日志的线程名 -->
+            <!-- %-5level         :输出日志级别 -->
+            <!-- %logger{36}      :logger名字最多36个字符，否则按照"."分割 ;%logger : 无限制-->
+            <!-- %msg             :输出的消息-->
+            <!-- %n               :换行 -->
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <!--“循环”的日志文件，意思是日志文件大于阀值的时候，日志文件清空后从头再输出。原信息会被存档-->
+        <!-- fileName      : 日志输出路径 -->
+        <!-- append="true" : 输出会追加不会清空 -->
+        <!-- filePattern   : 存档格式 -->
+        <RollingFile name="Error" fileName="${LOG_HOME}/${FILE_NAME}_error.log" append="true"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log.gz">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- %class{36} :最多36个字符的类名-->
+            <!-- %L         :行号 -->
+            <!-- %M         :方法名 -->
+            <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss} %-5level %class{36} %L %M - %msg%n"/>
+            <!-- 阀值 -->
+            <SizeBasedTriggeringPolicy size="${RollingFile_size}"/>
+        </RollingFile>
+
+        <!-- 文件 -->
+        <!-- fileName不能与<RollingFile>重名 -->
+        <File name="File" fileName="${LOG_HOME}/${FILE_NAME}.log" append="true">
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss} %-5level %class{36} %L %M - %msg%n"/>
+        </File>
+
+    </appenders>
+    <loggers>
+        <!-- <root>标签只能有一个 -->
+        <!-- 输出级别: -->
+        <!-- trace:追踪,是最低的日志级别,相当于追踪程序的执行 -->
+        <!-- debug:调试 -->
+        <!-- info :输出感兴趣的信息-->
+        <!-- warn :警告.有些时候,虽然程序不会报错,但是还是需要告诉程序员的 -->
+        <!-- error:错误 -->
+        <!-- fetal:极其重大的错误,这个一旦发生,程序基本上也要停止了-->
+        <root level="info">
+            <!-- ref:与<appenders>的子节点的name对应 -->
+            <appender-ref ref="Console"/>
+            <appender-ref ref="Error"/>
+            <appender-ref ref="File"/>
+        </root>
+
+        <!-- <logger>标签可以有多个,表示特殊处理的日志输出 -->
+        <!-- name:可以是包名或类名 -->
+        <!-- additivity="false":<root>输出过的不会再输出 -->
+        <!--
+        <logger name="xxx.xxx.xxx" level="trace" additivity="false">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
+        </logger>
+        -->
+
+    </loggers>
+</configuration>

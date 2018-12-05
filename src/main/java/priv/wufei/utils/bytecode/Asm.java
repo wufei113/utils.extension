@@ -32,6 +32,7 @@ public final class Asm {
      * 必须"$"打头
      */
     public static final String CHILD_CLASS_SIGN = "$Proxy";
+
     /**
      * 不能实例化这个类
      */
