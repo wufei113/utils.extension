@@ -10,7 +10,7 @@ public class Debug {
 
         try {
             System.out.println(DateTimeUtils.nanoTimeTimekeeping(() -> {
-                System.out.println(11);
+                System.out.println(String.format("我是%s", "神"));
                 System.out.println(11);
             }));
         } catch (Exception e) {

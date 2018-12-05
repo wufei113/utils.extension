@@ -24,7 +24,7 @@
         <!-- zxing(图形码) -->
         <zxing.version>3.3.3</zxing.version>
         <!-- junit -->
-        <junit.jupiter.version>5.3.2</junit.jupiter.version>
+        <junit.version>5.3.2</junit.version>
     </properties>
 
     <build>
@@ -53,10 +53,10 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- 绑定source插件到Maven的生命周期 -->
-                        <phase>compile</phase>
+                        <!-- 校验 -->
+                        <phase>verify</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -147,13 +147,6 @@
                 <version>${h2database.version}</version>
             </dependency>
 
-            <!-- zxing(多格式1D/2D图像码处理) -->
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>core</artifactId>
-                <version>${zxing.version}</version>
-            </dependency>
-
             <!-- zxing/javase -->
             <dependency>
                 <groupId>com.google.zxing</groupId>
@@ -165,7 +158,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.jupiter.version}</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -213,12 +206,6 @@
         <!-- zxing(多格式1D/2D图像码处理) -->
         <dependency>
             <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-        </dependency>
-
-        <!-- zxing/javase -->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
         </dependency>
 
@@ -226,6 +213,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+
+        <!-- log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.11.1</version>
         </dependency>
 
     </dependencies>
