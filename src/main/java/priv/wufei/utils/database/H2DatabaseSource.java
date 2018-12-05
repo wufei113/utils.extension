@@ -74,7 +74,9 @@ public final class H2DatabaseSource implements DataSource {
         //初始化数据池
         for (int i = 0; i < corePoolSize; i++) {
 
-            createConnection();
+            ConnectionWrapper connectionWrapper = createConnectionWrapper();
+
+            pool.add(connectionWrapper);
         }
     }
 
@@ -104,14 +106,11 @@ public final class H2DatabaseSource implements DataSource {
      *
      * @throws SQLException SQLException
      */
-    private void createConnection() throws SQLException {
-
+    private ConnectionWrapper createConnectionWrapper() throws SQLException {
         //获取连接
         Connection conn = DriverManager.getConnection(url, username, password);
         //进行装饰
-        ConnectionWrapper wrapper = new ConnectionWrapper(conn, pool, this);
-
-        pool.add(wrapper);
+        return new ConnectionWrapper(conn, pool, this);
     }
 
     /**
@@ -123,15 +122,13 @@ public final class H2DatabaseSource implements DataSource {
     @Override
     public Connection getConnection() throws SQLException {
 
-        Connection conn;
-
         if (pool == null || pool.size() <= 0) {
 
-            createConnection();
-        }
-        conn = pool.removeFirst();
+            ConnectionWrapper connectionWrapper = createConnectionWrapper();
 
-        return conn;
+            pool.add(connectionWrapper);
+        }
+        return pool.removeFirst();
     }
 
     /**
