@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- javase: log4j2.xml放在项目根目录下(maven环境:resources下面) -->
+<!-- javase: log4j2.xml放在项目根目录(classpath)下(maven环境:resources下面) -->
 
 <!-- status为不记录log4j本身的日志 -->
 <!-- monitorInterval每隔一段时间就会检查一遍这个文件是否修改。最小是5s -->
