@@ -1,15 +1,15 @@
 package priv.wufei.tools.rename;
 
-import priv.wufei.utils.basis.DateTimeUtils;
-import priv.wufei.utils.basis.FileUtils;
-import priv.wufei.utils.basis.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
+import static priv.wufei.utils.basis.DateTimeUtils.nanoTimeTimekeeping;
+import static priv.wufei.utils.basis.FileUtils.renameTo;
+import static priv.wufei.utils.basis.StringUtils.replaceLast;
 
 /**
  * 重命名工具
@@ -32,14 +32,14 @@ public final class RenameTools {
      */
     public static void reverseSort(String dirPath) throws Exception {
 
-        var diffTime = DateTimeUtils.nanoTimeTimekeeping(() -> {
+        var diffTime = nanoTimeTimekeeping(() -> {
 
             //临时标记字符串
             var bakStr = ".temp";
 
             var folder = new File(dirPath);
 
-            var stream = Arrays.stream(Objects.requireNonNull(folder.listFiles()));
+            var stream = Arrays.stream(requireNonNull(folder.listFiles()));
             //过滤掉文件夹,并进行一次排序
             var files = stream.filter(File::isFile).sorted().collect(Collectors.toList());
 
@@ -55,8 +55,8 @@ public final class RenameTools {
                 var temp1 = s1 + bakStr;
                 var temp2 = s2 + bakStr;
 
-                FileUtils.renameTo(s1, temp2);
-                FileUtils.renameTo(s2, temp1);
+                renameTo(s1, temp2);
+                renameTo(s2, temp1);
 
                 tempFilePaths.add(temp1);
                 tempFilePaths.add(temp2);
@@ -64,9 +64,9 @@ public final class RenameTools {
 
             for (var tempPath : tempFilePaths) {
                 //替换掉临时标记字符串
-                var newPath = StringUtils.replaceLast(tempPath, bakStr, "");
+                var newPath = replaceLast(tempPath, bakStr, "");
 
-                FileUtils.renameTo(tempPath, newPath);
+                renameTo(tempPath, newPath);
             }
         });
         System.out.println("___________总用时___________\n" + diffTime);

@@ -1,17 +1,18 @@
 package priv.wufei.utils.video;
 
-import priv.wufei.utils.basis.CmdUtils;
-import priv.wufei.utils.basis.DateTimeUtils;
-import priv.wufei.utils.basis.NumberUtils;
-import priv.wufei.utils.basis.PropertiesUtils;
-import priv.wufei.utils.basis.StringUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static priv.wufei.utils.basis.CmdUtils.execute;
+import static priv.wufei.utils.basis.DateTimeUtils.toDecimalTime;
+import static priv.wufei.utils.basis.NumberUtils.getNumberOfDigits;
+import static priv.wufei.utils.basis.PropertiesUtils.getString;
+import static priv.wufei.utils.basis.PropertiesUtils.loadProperties;
+import static priv.wufei.utils.basis.StringUtils.isNotBlank;
 
 /**
  * FFmpeg视频工具
@@ -27,14 +28,14 @@ public final class FFmpeg {
         Properties props = null;
 
         try {
-            props = PropertiesUtils.loadProperties(FFmpeg.class, "/external-apps.properties");
+            props = loadProperties(FFmpeg.class, "/external-apps.properties");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         assert props != null;
 
-        FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
+        FFMPEG = getString(props, "ffmpeg");
     }
 
     /**
@@ -52,7 +53,7 @@ public final class FFmpeg {
      */
     public static double getTotalTime(String videoFilePath) throws Exception {
 
-        List<String> infos = CmdUtils.execute(FFMPEG + " -i " + videoFilePath);
+        List<String> infos = execute(FFMPEG + " -i " + videoFilePath);
         //从视频信息中解析时长
         String regexDuration = "Duration: (.*?), start: (.*?), bitrate: (\\d*) kb/s";
 
@@ -61,7 +62,7 @@ public final class FFmpeg {
         Matcher m = pattern.matcher(infos.toString());
 
         if (m.find()) {
-            return DateTimeUtils.toDecimalTime(m.group(1));
+            return toDecimalTime(m.group(1));
         } else {
             throw new Exception("文件未能解析到时长");
         }
@@ -76,7 +77,7 @@ public final class FFmpeg {
      */
     public static double getFPS(String videoFilePath) throws Exception {
 
-        List<String> infos = CmdUtils.execute(FFMPEG + " -i " + videoFilePath);
+        List<String> infos = execute(FFMPEG + " -i " + videoFilePath);
         /*
          *以下占位符分别表示:
          *编码格式/像素格式/分辨率/数据速率/帧率/帧率
@@ -138,7 +139,7 @@ public final class FFmpeg {
         //总共要截的图片数目(向上取整)
         int amount = (int) (Math.floor(totalTime) * rate);
         //几位数
-        int numberOfDigits = NumberUtils.getNumberOfDigits(amount);
+        int numberOfDigits = getNumberOfDigits(amount);
 
         //图像输出路径
         File outFolder = new File(outPicDirPath);
@@ -161,11 +162,11 @@ public final class FFmpeg {
         commands.add("-f");       //指定格式(音频或视频格式)
         commands.add("image2");
         commands.add("-t");       //持续时长(s)，hh:mm:ss[.xxx]的格式也支持
-        commands.add(StringUtils.isNotBlank(duration) ? duration : totalTime + "");
+        commands.add(isNotBlank(duration) ? duration : totalTime + "");
         //用指定位数的数字自动从小到大生成文件名
         commands.add(outDir + "%" + numberOfDigits + "d.png");
 
-        return CmdUtils.execute(commands);
+        return execute(commands);
     }
 
     /**
@@ -206,19 +207,19 @@ public final class FFmpeg {
         commands.add("-i");           //输入的文件
         commands.add(videoFilePath);
 
-        if (StringUtils.isNotBlank(codec)) {
+        if (isNotBlank(codec)) {
             commands.add("-vcodec");  //解码方式
             commands.add(codec);
         }
 
-        if (StringUtils.isNotBlank(format)) {
+        if (isNotBlank(format)) {
             commands.add("-pix_fmt"); //像素格式
             commands.add(format);
         }
 
         commands.add(outFilePath);    //输出路径
 
-        return CmdUtils.execute(commands);
+        return execute(commands);
     }
 
 }

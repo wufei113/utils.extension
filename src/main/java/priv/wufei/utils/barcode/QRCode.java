@@ -13,7 +13,6 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import priv.wufei.utils.basis.ImageUtils;
 import priv.wufei.utils.basis.enumeration.LanguageEncode;
 import priv.wufei.utils.basis.enumeration.RenderingHint;
 
@@ -23,6 +22,10 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+
+import static priv.wufei.utils.basis.ImageUtils.createBufferedImage;
+import static priv.wufei.utils.basis.ImageUtils.customOperate;
+import static priv.wufei.utils.basis.ImageUtils.setBorderStroke;
 
 /**
  * 二维码工具
@@ -123,9 +126,9 @@ public final class QRCode {
         int height = matrixImage.getHeight();
 
         //读取Logo图片
-        BufferedImage logo = ImageUtils.createBufferedImage(logoFilePath);
+        BufferedImage logo = createBufferedImage(logoFilePath);
 
-        ImageUtils.customOperate(matrixImage, (g2d) -> {
+        customOperate(matrixImage, (g2d) -> {
 
             g2d.setColor(Color.WHITE);
             //抗锯齿
@@ -134,7 +137,7 @@ public final class QRCode {
             g2d.drawImage(logo, width * 2 / 5, height * 2 / 5, width / 5, height / 5, null);
 
             //设置圆弧线条
-            ImageUtils.setBorderStroke(g2d, new BasicStroke(width / 40.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            setBorderStroke(g2d, new BasicStroke(width / 40.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             //指定弧度的圆角矩形
             RoundRectangle2D.Double r1 = new RoundRectangle2D.Double(width * 2 / 5.0, height * 2 / 5.0,
                     width / 5.0, height / 5.0, width / 20.0, height / 20.0);
@@ -145,7 +148,7 @@ public final class QRCode {
             g2d.setColor(Color.GRAY);
             //间隙距离
             int gap = width / 200;
-            ImageUtils.setBorderStroke(g2d, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            setBorderStroke(g2d, new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             RoundRectangle2D.Double r2 = new RoundRectangle2D.Double(width / 5.0 * 2 + gap, height / 5.0 * 2 + gap,
                     width / 5.0 - 2 * gap, height / 5.0 - 2 * gap, width / 20.0, height / 20.0);
             g2d.draw(r2);

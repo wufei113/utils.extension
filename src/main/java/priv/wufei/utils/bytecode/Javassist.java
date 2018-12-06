@@ -3,8 +3,9 @@ package priv.wufei.utils.bytecode;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import priv.wufei.utils.basis.ArrayUtils;
-import priv.wufei.utils.basis.ReflectUtils;
+
+import static priv.wufei.utils.basis.ArrayUtils.isNotEmpty;
+import static priv.wufei.utils.basis.ReflectUtils.defineClass;
 
 /**
  * Javassist字节码工具
@@ -60,7 +61,7 @@ public final class Javassist {
         /*对方法参数数组进行转换*/
         CtClass[] ctClasses = null;
 
-        if (ArrayUtils.isNotEmpty(parameterTypes)) {
+        if (isNotEmpty(parameterTypes)) {
 
             int length = parameterTypes.length;
             String[] arr = new String[length];
@@ -82,7 +83,7 @@ public final class Javassist {
         /*转换为二进制数组*/
         byte[] bytes = cc.toBytecode();
 
-        return (Class<T>) ReflectUtils.defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
+        return (Class<T>) defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
     }
 
 }

@@ -6,10 +6,11 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import priv.wufei.utils.basis.ReflectUtils;
 
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+
+import static priv.wufei.utils.basis.ReflectUtils.defineClass;
 
 /**
  * ASM字节码工具
@@ -302,7 +303,7 @@ public final class Asm {
 
         byte[] bytes = cw.toByteArray();
 
-        return (Class<T>) ReflectUtils.defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
+        return (Class<T>) defineClass(parentClassName + CHILD_CLASS_SIGN, bytes);
     }
 
 }

@@ -1,12 +1,14 @@
 package priv.wufei.utils.database;
 
-import priv.wufei.utils.basis.PropertiesUtils;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Properties;
+
+import static priv.wufei.utils.basis.PropertiesUtils.getInt;
+import static priv.wufei.utils.basis.PropertiesUtils.getString;
+import static priv.wufei.utils.basis.PropertiesUtils.loadProperties;
 
 /**
  * H2数据库数据源
@@ -49,18 +51,18 @@ public final class H2DatabaseSource implements DataSource {
         Properties prop = null;
 
         try {
-            prop = PropertiesUtils.loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2-config.properties");
+            prop = loadProperties(H2DatabaseSource.class, "/priv/wufei/utils/database/h2-config.properties");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         assert prop != null;
 
-        driverClassName = PropertiesUtils.getString(prop, "driverClassName");
-        url = PropertiesUtils.getString(prop, "url");
-        username = PropertiesUtils.getString(prop, "username");
-        password = PropertiesUtils.getString(prop, "password");
-        corePoolSize = PropertiesUtils.getInt(prop, "corePoolSize");
+        driverClassName = getString(prop, "driverClassName");
+        url = getString(prop, "url");
+        username = getString(prop, "username");
+        password = getString(prop, "password");
+        corePoolSize = getInt(prop, "corePoolSize");
     }
 
     /**

@@ -1,11 +1,12 @@
 package priv.wufei.utils.audio;
 
-import priv.wufei.utils.basis.CmdUtils;
-import priv.wufei.utils.basis.PropertiesUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static priv.wufei.utils.basis.CmdUtils.execute;
+import static priv.wufei.utils.basis.PropertiesUtils.getString;
+import static priv.wufei.utils.basis.PropertiesUtils.loadProperties;
 
 /**
  * FFmpeg音频工具
@@ -21,14 +22,14 @@ public final class FFmpeg {
         Properties props = null;
 
         try {
-            props = PropertiesUtils.loadProperties(FFmpeg.class, "/external-apps.properties");
+            props = loadProperties(FFmpeg.class, "/external-apps.properties");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         assert props != null;
 
-        FFMPEG = PropertiesUtils.getString(props, "ffmpeg");
+        FFMPEG = getString(props, "ffmpeg");
     }
 
     /**
@@ -68,7 +69,7 @@ public final class FFmpeg {
         commands.add(codec);
         commands.add(wavFilePath);
 
-        return CmdUtils.execute(commands);
+        return execute(commands);
     }
 
 }

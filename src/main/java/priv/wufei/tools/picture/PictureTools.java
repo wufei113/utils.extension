@@ -1,15 +1,20 @@
 package priv.wufei.tools.picture;
 
-import priv.wufei.utils.basis.DateTimeUtils;
-import priv.wufei.utils.basis.FileUtils;
-import priv.wufei.utils.basis.ThreadUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static priv.wufei.tools.picture.PerceptualHashAlgorithm.calSimilarity;
+import static priv.wufei.tools.picture.PerceptualHashAlgorithm.getFingerprint;
+import static priv.wufei.tools.picture.PerceptualHashAlgorithm.getHammingDistance;
+import static priv.wufei.utils.basis.DateTimeUtils.nanoTimeTimekeeping;
+import static priv.wufei.utils.basis.FileUtils.getFileName;
+import static priv.wufei.utils.basis.FileUtils.getFiles;
+import static priv.wufei.utils.basis.FileUtils.renameTo;
+import static priv.wufei.utils.basis.ThreadUtils.getThreadPool;
 
 /**
  * 图像工具
@@ -33,7 +38,7 @@ public final class PictureTools {
      */
     public static void imageSimilarityRecognition(String srcDirPath) throws Exception {
 
-        var diffTime = DateTimeUtils.nanoTimeTimekeeping(() -> {
+        var diffTime = nanoTimeTimekeeping(() -> {
 
             //缩小成px乘px的缩略图
             var px = 8;
@@ -46,16 +51,16 @@ public final class PictureTools {
             //存放相似图像的路径
             Set<String> similar = new HashSet<>();
             //得到目录(文件)下所有文件集合,不包括文件夹
-            var files = FileUtils.getAllFiles(new File(srcDirPath));
+            var files = getFiles(new File(srcDirPath));
             //创建线程池
-            var threadPool = ThreadUtils.getThreadPool(4, 4,
+            var threadPool = getThreadPool(4, 4,
                     1000, TimeUnit.MILLISECONDS, 500, "吴飞");
             //进行遍历
             for (var file : files) {
                 Runnable runnable = () -> {
                     System.out.println("正在处理: " + file.getAbsolutePath());
                     //得到图像指纹序列
-                    var pixels = PerceptualHashAlgorithm.getFingerprint(px, file);
+                    var pixels = getFingerprint(px, file);
                     imageDates.add(imageDateInterface.createImageDate(file.getAbsolutePath(), pixels));
                 };
                 threadPool.execute(runnable);
@@ -74,11 +79,11 @@ public final class PictureTools {
                         //获取两个图的汉明距离
                         var pixels1 = imageDates.get(j).getPixels();
                         var pixels2 = imageDates.get(k).getPixels();
-                        var hammingDistance = PerceptualHashAlgorithm.getHammingDistance(pixels1, pixels2);
+                        var hammingDistance = getHammingDistance(pixels1, pixels2);
                         //大于diff的差异过大
                         if (hammingDistance < diff) {
                             //通过汉明距离计算相似度，取值范围 [0.0, 1.0]
-                            var similarity = PerceptualHashAlgorithm.calSimilarity(px, hammingDistance);
+                            var similarity = calSimilarity(px, hammingDistance);
 
                             var filepath1 = imageDates.get(j).getFilepath();
                             var filepath2 = imageDates.get(k).getFilepath();
@@ -86,8 +91,8 @@ public final class PictureTools {
                             similar.add(filepath1);
                             similar.add(filepath2);
 
-                            var filename1 = FileUtils.getFileName(filepath1);
-                            var filename2 = FileUtils.getFileName(filepath2);
+                            var filename1 = getFileName(filepath1);
+                            var filename2 = getFileName(filepath2);
                             //输出相似度信息
                             System.out.print("\"" + filename1 + "\"和\"" + filename2 + "\"");
                             System.out.println("  相似度：" + String.format("%1$.2f", (similarity * 100)) + "%");
@@ -99,7 +104,7 @@ public final class PictureTools {
                     similar.parallelStream().forEach((oldPath) -> {
                         var oldFile = new File(oldPath);
                         var newFile = new File(oldFile.getParent(), "_similar__" + oldFile.getName());
-                        FileUtils.renameTo(oldFile, newFile);
+                        renameTo(oldFile, newFile);
                     });
                 } else {
                     System.out.println("未发现相似图像");

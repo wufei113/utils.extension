@@ -1,11 +1,13 @@
 package priv.wufei.tools.picture;
 
-import priv.wufei.utils.basis.ImageUtils;
-
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.File;
+
+import static priv.wufei.utils.basis.ImageUtils.changeColorSpace;
+import static priv.wufei.utils.basis.ImageUtils.createBufferedImage;
+import static priv.wufei.utils.basis.ImageUtils.scale;
 
 /**
  * 图片相似度比较
@@ -47,13 +49,13 @@ public final class PerceptualHashAlgorithm {
     protected static int[] getFingerprint(int px, File srcImageFile) {
         try {
             //获取图像
-            BufferedImage image = ImageUtils.createBufferedImage(srcImageFile);
+            BufferedImage image = createBufferedImage(srcImageFile);
             //判断是不是图像,不是继续操作,否则返回null
             if (null != image) {
                 //缩小成px乘px的缩略图
-                image = ImageUtils.scale(image, px, px);
+                image = scale(image, px, px);
                 //转换至灰度
-                image = ImageUtils.changeColorSpace(image, ColorSpace.CS_GRAY, null);
+                image = changeColorSpace(image, ColorSpace.CS_GRAY, null);
                 //获取灰度像素数组
                 int[] pixels = image.getRGB(0, 0, px, px, null, 0, px);
                 //获取平均灰度颜色
