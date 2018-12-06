@@ -69,7 +69,7 @@ public final class PictureTools {
             threadPool.shutdown();
             //没处理完，不让走
             while (threadPool.getCompletedTaskCount() < files.size()) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             }
 
             var size = imageDates.size();
