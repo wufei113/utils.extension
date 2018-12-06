@@ -25,7 +25,7 @@ public final class FFmpeg {
         Properties props = null;
 
         try {
-            props = PropertiesUtils.loadProperties(FFmpeg.class, "/priv/wufei/utils/external-apps.properties");
+            props = PropertiesUtils.loadProperties(FFmpeg.class, "/external-apps.properties");
         } catch (Exception e) {
             e.printStackTrace();
         }
