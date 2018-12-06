@@ -8,6 +8,7 @@ import priv.wufei.utils.basis.FileUtils;
  */
 
 public class Debug {
+
     static Logger logger = LogManager.getLogger(Debug.class);
 
     public static void main(String[] args) {
@@ -20,7 +21,7 @@ public class Debug {
 
             }));
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e::getMessage, e);
         }
     }
 

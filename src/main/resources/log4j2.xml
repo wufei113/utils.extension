@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- javase: log4j2.xml放在项目根目录(classpath)下(maven环境:resources下面) -->
+<!--
+ //使用示例
+ public class XXXXX {
 
+    static Logger logger = LogManager.getLogger(XXXXX.class);
+
+    public static void main(String[] args) {
+
+        try {
+
+            ...
+
+        } catch (Exception e) {
+            logger.error(e::getMessage, e);
+        }
+    }
+}
+
+
+ -->
 <!-- status为不记录log4j本身的日志 -->
 <!-- monitorInterval每隔一段时间就会检查一遍这个文件是否修改。最小是5s -->
 <configuration status="OFF" monitorInterval="30">
@@ -78,8 +97,8 @@
         <root level="info">
             <!-- ref:与<appenders>的子节点的name对应 -->
             <appender-ref ref="Console"/>
-            <appender-ref ref="Error"/>
-            <appender-ref ref="File"/>
+            <!--  <appender-ref ref="Error"/>
+              <appender-ref ref="File"/>-->
         </root>
 
         <!-- <logger>标签可以有多个,表示特殊处理的日志输出 -->
