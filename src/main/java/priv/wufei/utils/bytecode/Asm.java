@@ -9,7 +9,6 @@ import org.objectweb.asm.Type;
 import priv.wufei.utils.basis.ReflectUtils;
 
 import java.lang.reflect.Method;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -41,6 +40,7 @@ public final class Asm {
 
     /**
      * 将动态生成类改造成原始类的子类<br>
+     * 注意:原始类不能被{@code final}修饰<br>
      * 改变 class文件二进制类名, 将其命名为 Parent$Proxy，将其父类指定为Parent。<br>
      * 改变构造函数，将其中对父类构造函数的调用转换为对Parent构造函数的调用。
      *
@@ -118,12 +118,14 @@ public final class Asm {
      *
      * @param classVisitor {@link ClassVisitor}对象
      * @param method       进行代理的方法
-     * @param diy          自定义代理操作(返回null为删除方法)
+     * @param methodBefore 前拦截
+     * @param methodAfter  后拦截
      * @return 进行操作后的 {@link ClassVisitor} 对象
      */
     public static ClassVisitor methodProxy(ClassVisitor classVisitor,
                                            Method method,
-                                           BiFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
+                                           Consumer<MethodVisitor> methodBefore,
+                                           Consumer<MethodVisitor> methodAfter) {
 
         //方法名
         final String methodName = method.getName();
@@ -139,7 +141,7 @@ public final class Asm {
                 //寻找指定名称的方法
                 if (methodName.equals(name) && descriptor.equals(desc)) {
 
-                    return diy.apply(this, mv);
+                    return methodProxyOperate(mv, methodBefore, methodAfter);
                 }
                 return mv;
             }
@@ -148,16 +150,18 @@ public final class Asm {
 
     /**
      * 所有方法都进行代理<br>
-     * 指定是否代理构造方法
+     * 可指定是否代理构造方法
      *
      * @param classVisitor       {@link ClassVisitor}对象
      * @param isConstructorProxy 是否把构造方法也进行代理(true:进行代理;false:不进行代理)
-     * @param diy                自定义代理操作(返回null为删除方法)
+     * @param methodBefore       前拦截
+     * @param methodAfter        后拦截
      * @return 进行操作后的 {@link ClassVisitor} 对象
      */
     public static ClassVisitor methodProxy(ClassVisitor classVisitor,
                                            boolean isConstructorProxy,
-                                           BiFunction<ClassVisitor, MethodVisitor, MethodVisitor> diy) {
+                                           Consumer<MethodVisitor> methodBefore,
+                                           Consumer<MethodVisitor> methodAfter) {
 
         return new ClassVisitor(API, classVisitor) {
 
@@ -168,9 +172,54 @@ public final class Asm {
 
                 if (isConstructorProxy || !CONSTRUCTOR_SIGN.equals(name)) {
 
-                    return diy.apply(this, mv);
+                    return methodProxyOperate(mv, methodBefore, methodAfter);
                 }
                 return mv;
+            }
+        };
+    }
+
+    /**
+     * 方法代理操作
+     *
+     * @param methodVisitor {@link MethodVisitor}对象
+     * @param methodBefore  前拦截
+     * @param methodAfter   后拦截
+     * @return 进行操作后的 {@link MethodVisitor} 对象
+     */
+    private static MethodVisitor methodProxyOperate(MethodVisitor methodVisitor,
+                                                    Consumer<MethodVisitor> methodBefore,
+                                                    Consumer<MethodVisitor> methodAfter) {
+
+        return new MethodVisitor(API, methodVisitor) {
+
+            /**
+             * 此方法在访问方法的头部时被访问到，仅被访问一次
+             */
+            @Override
+            public void visitCode() {
+                //前拦截
+                methodBefore.accept(this);
+
+                super.visitCode();
+            }
+
+            /**
+             * 此方法可以获取方法中每一条指令的操作类型，被访问多次
+             * @param opcode  要访问的指令的操作码
+             */
+            @Override
+            public void visitInsn(int opcode) {
+
+                //在方法结尾处添加新指令，则应判断
+                boolean b1 = opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
+                boolean b2 = opcode == Opcodes.ATHROW;
+
+                if (b1 || b2) {
+                    //后拦截
+                    methodAfter.accept(this);
+                }
+                super.visitInsn(opcode);
             }
         };
     }
@@ -208,51 +257,6 @@ public final class Asm {
     }
 
     /**
-     * 方法代理操作
-     *
-     * @param methodVisitor {@link MethodVisitor}对象
-     * @param methodBefore  前拦截
-     * @param methodAfter   后拦截
-     * @return 进行操作后的 {@link MethodVisitor} 对象
-     */
-    public static MethodVisitor methodProxyOperate(MethodVisitor methodVisitor,
-                                                   Consumer<MethodVisitor> methodBefore,
-                                                   Consumer<MethodVisitor> methodAfter) {
-
-        return new MethodVisitor(API, methodVisitor) {
-
-            /**
-             * 此方法在访问方法的头部时被访问到，仅被访问一次
-             */
-            @Override
-            public void visitCode() {
-                //前拦截
-                methodBefore.accept(this);
-
-                super.visitCode();
-            }
-
-            /**
-             * 此方法可以获取方法中每一条指令的操作类型，被访问多次
-             * @param opcode  要访问的指令的操作码
-             */
-            @Override
-            public void visitInsn(int opcode) {
-
-                //在方法结尾处添加新指令，则应判断
-                boolean b1 = opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
-                boolean b2 = opcode == Opcodes.ATHROW;
-
-                if (b1 || b2) {
-                    //后拦截
-                    methodAfter.accept(this);
-                }
-                super.visitInsn(opcode);
-            }
-        };
-    }
-
-    /**
      * <p>
      * 示例方法
      * </p>
@@ -275,17 +279,16 @@ public final class Asm {
                                             Class<?>... parameterTypes) throws Exception {
 
         Method method = clz.getDeclaredMethod(methodName, parameterTypes);
-
+        //COMPUTE_MAXS对堆栈等数据会自动调整
         ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         //改为被代理的子类
         ClassVisitor cv1 = changeToChildClass(cw);
         //对指定方法进行代理
         ClassVisitor cv2 = methodProxy(cv1, method,
-                (classVisitor, methodVisitor) -> methodProxyOperate(methodVisitor,
-                        (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodBefore.getDeclaringClass().getTypeName(),
-                                methodBefore.getName(), Type.getMethodDescriptor(methodBefore), false),
-                        (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodAfter.getDeclaringClass().getTypeName(),
-                                methodAfter.getName(), Type.getMethodDescriptor(methodAfter), false)));
+                (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodBefore.getDeclaringClass().getTypeName(),
+                        methodBefore.getName(), Type.getMethodDescriptor(methodBefore), false),
+                (mv) -> mv.visitMethodInsn(Opcodes.INVOKESTATIC, methodAfter.getDeclaringClass().getTypeName(),
+                        methodAfter.getName(), Type.getMethodDescriptor(methodAfter), false));
 
         String parentClassName = clz.getTypeName();
         /*
