@@ -1,6 +1,8 @@
 import bean.Person;
 import javassist.ClassPool;
 import javassist.CtClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import priv.wufei.utils.basis.DateTimeUtils;
 import priv.wufei.utils.bytecode.Asm;
 
@@ -12,7 +14,7 @@ import java.lang.reflect.Method;
 
 public class Debug {
 
-    //  static Logger logger = LogManager.getLogger(Debug.class);
+    static Logger logger = LoggerFactory.getLogger(Debug.class);
 
     public static void main(String[] args) {
 
@@ -29,7 +31,7 @@ public class Debug {
 
             }));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 

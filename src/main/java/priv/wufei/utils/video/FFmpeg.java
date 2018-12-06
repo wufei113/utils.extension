@@ -14,6 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * FFmpeg视频工具
+ *
  * @author WuFei
  */
 public final class FFmpeg {
@@ -61,7 +63,7 @@ public final class FFmpeg {
         if (m.find()) {
             return DateTimeUtils.toDecimalTime(m.group(1));
         } else {
-            throw new RuntimeException("文件未能解析到时长");
+            throw new Exception("文件未能解析到时长");
         }
     }
 
@@ -89,7 +91,7 @@ public final class FFmpeg {
         if (m.find()) {
             return Double.parseDouble(m.group(5));
         } else {
-            throw new RuntimeException("文件未能解析到帧率");
+            throw new Exception("文件未能解析到帧率");
         }
     }
 

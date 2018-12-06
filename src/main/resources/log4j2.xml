@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- javase: log4j2.xml放在项目根目录(classpath)下(maven环境:resources下面) -->
-<!--
- //使用示例
- public class XXXXX {
 
+<!--//log4j2调用示例
     static Logger logger = LogManager.getLogger(XXXXX.class);
 
     public static void main(String[] args) {
 
         try {
-
             ...
-
         } catch (Exception e) {
             logger.error(e::getMessage, e);
         }
     }
-}
+-->
 
+<!--//slf4j调用示例
+    static Logger logger = LoggerFactory.getLogger(XXXXX.class);
 
- -->
+    public static void main(String[] args) {
+
+        try {
+            ...
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+-->
+
 <!-- status为不记录log4j本身的日志 -->
 <!-- monitorInterval每隔一段时间就会检查一遍这个文件是否修改。最小是5s -->
 <configuration status="OFF" monitorInterval="30">
