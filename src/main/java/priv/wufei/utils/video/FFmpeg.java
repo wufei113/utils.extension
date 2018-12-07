@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.io.File.separatorChar;
 import static priv.wufei.utils.basis.CmdUtils.execute;
 import static priv.wufei.utils.basis.DateTimeUtils.toDecimalTime;
 import static priv.wufei.utils.basis.NumberUtils.getNumberOfDigits;
@@ -147,7 +148,7 @@ public final class FFmpeg {
         if (!outFolder.exists()) {
             outFolder.mkdirs();
         }
-        String outDir = outFolder.getAbsolutePath() + File.separatorChar;
+        String outDir = outFolder.getAbsolutePath() + separatorChar;
 
         List<String> commands = new ArrayList<>();
 

@@ -4,7 +4,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import priv.wufei.utils.basis.function.OneConsumer;
+import priv.wufei.utils.basis.function.ConsumerThrow1;
 
 import java.io.File;
 import java.util.Iterator;
@@ -30,7 +30,7 @@ public final class Dom4j {
      * @param diy         对根节点的自定义操作
      * @throws Exception Exception
      */
-    public static void parse(String srcFilePath, OneConsumer<Element> diy) throws Exception {
+    public static void parse(String srcFilePath, ConsumerThrow1<Element> diy) throws Exception {
 
         parse(new File(srcFilePath), diy);
     }
@@ -42,7 +42,7 @@ public final class Dom4j {
      * @param diy     对根节点的自定义操作
      * @throws Exception Exception
      */
-    public static void parse(File srcFile, OneConsumer<Element> diy) throws Exception {
+    public static void parse(File srcFile, ConsumerThrow1<Element> diy) throws Exception {
 
         // 创建SAXReader的对象reader
         SAXReader reader = new SAXReader();

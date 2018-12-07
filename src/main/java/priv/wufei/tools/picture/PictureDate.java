@@ -40,10 +40,12 @@ public class PictureDate {
     }
 
     protected String getFilepath() {
+
         return filepath;
     }
 
     protected int[] getPixels() {
+
         return pixels;
     }
 }

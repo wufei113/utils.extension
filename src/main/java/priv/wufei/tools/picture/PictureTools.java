@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.out;
 import static priv.wufei.tools.picture.PerceptualHashAlgorithm.calSimilarity;
 import static priv.wufei.tools.picture.PerceptualHashAlgorithm.getFingerprint;
 import static priv.wufei.tools.picture.PerceptualHashAlgorithm.getHammingDistance;
@@ -58,7 +59,7 @@ public final class PictureTools {
             //进行遍历
             for (var file : files) {
                 Runnable runnable = () -> {
-                    System.out.println("正在处理: " + file.getAbsolutePath());
+                    out.println("正在处理: " + file.getAbsolutePath());
                     //得到图像指纹序列
                     var pixels = getFingerprint(px, file);
                     imageDates.add(imageDateInterface.createImageDate(file.getAbsolutePath(), pixels));
@@ -94,8 +95,8 @@ public final class PictureTools {
                             var filename1 = getFileName(filepath1);
                             var filename2 = getFileName(filepath2);
                             //输出相似度信息
-                            System.out.print("\"" + filename1 + "\"和\"" + filename2 + "\"");
-                            System.out.println("  相似度：" + String.format("%1$.2f", (similarity * 100)) + "%");
+                            out.print("\"" + filename1 + "\"和\"" + filename2 + "\"");
+                            out.println("  相似度：" + String.format("%.2f%%", similarity * 100));
                         }
                     }
                 }
@@ -107,14 +108,14 @@ public final class PictureTools {
                         renameTo(oldFile, newFile);
                     });
                 } else {
-                    System.out.println("未发现相似图像");
+                    out.println("未发现相似图像");
                 }
             } else {
-                System.out.println("未发现图像");
+                out.println("未发现图像");
             }
-            System.out.println("结束");
+            out.println("结束");
         });
-        System.out.println("___________总用时___________\n" + diffTime);
+        out.println("___________总用时___________\n" + diffTime);
     }
 
 }
