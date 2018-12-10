@@ -165,7 +165,7 @@ public final class FFmpeg {
         commands.add("-t");       //持续时长(s)，hh:mm:ss[.xxx]的格式也支持
         commands.add(isNotBlank(duration) ? duration : totalTime + "");
         //用指定位数的数字自动从小到大生成文件名
-        commands.add(outDir + "%" + numberOfDigits + "d.png");
+        commands.add(String.format("%s%%%dd.png", outDir, numberOfDigits));
 
         return execute(commands);
     }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.lineSeparator;
 import static java.lang.System.out;
 import static priv.wufei.tools.picture.PerceptualHashAlgorithm.calSimilarity;
 import static priv.wufei.tools.picture.PerceptualHashAlgorithm.getFingerprint;
@@ -95,8 +96,7 @@ public final class PictureTools {
                             var filename1 = getFileName(filepath1);
                             var filename2 = getFileName(filepath2);
                             //输出相似度信息
-                            out.print("\"" + filename1 + "\"和\"" + filename2 + "\"");
-                            out.println("  相似度：" + String.format("%.2f%%", similarity * 100));
+                            out.printf("%s和%s 相似度：%.2f%%" + lineSeparator(), filename1, filename2, similarity * 100);
                         }
                     }
                 }
@@ -115,7 +115,7 @@ public final class PictureTools {
             }
             out.println("结束");
         });
-        out.println("___________总用时___________\n" + diffTime);
+        out.println("___________总用时___________" + diffTime);
     }
 
 }

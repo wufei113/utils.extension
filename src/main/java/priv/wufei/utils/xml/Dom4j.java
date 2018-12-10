@@ -10,6 +10,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.lang.System.out;
+
 /**
  * dom4j工具
  *
@@ -63,12 +65,12 @@ public final class Dom4j {
     public static void traversal(Element element, int i) {
 
         String space = "    ".repeat(i);
-        System.out.println();
-        System.out.println(space + "节点名：" + element.getName());
+        out.println();
+        out.println(String.format("%s节点名：%s", space, element.getName()));
         // 获取element的属性名以及属性值
         List<Attribute> attrs = element.attributes();
         for (Attribute attr : attrs) {
-            System.out.println(space + "  " + "属性名：" + attr.getName() + "  属性值：" + attr.getValue().trim());
+            out.println(String.format("%s  属性名：%s  属性值：%s", space, attr.getName(), attr.getValue().trim()));
         }
 
         //获取节点迭代器
@@ -82,7 +84,7 @@ public final class Dom4j {
                 traversal(child, i + 1);
             }
         } else {
-            System.out.println(space + "节点值：" + element.getStringValue().trim());
+            out.println(String.format("%s节点值：%s", space, element.getStringValue().trim()));
         }
     }
 

@@ -69,7 +69,7 @@ public final class RenameTools {
                 renameTo(tempPath, newPath);
             }
         });
-        System.out.println("___________总用时___________\n" + diffTime);
+        System.out.println("___________总用时___________" + diffTime);
     }
 
 }
