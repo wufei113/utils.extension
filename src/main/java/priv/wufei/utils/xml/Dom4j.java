@@ -14,7 +14,7 @@ import static java.lang.System.lineSeparator;
 import static java.lang.System.out;
 
 /**
- * dom4j工具
+ * dom4j框架
  *
  * @author WuFei
  */

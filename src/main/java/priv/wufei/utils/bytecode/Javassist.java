@@ -8,7 +8,7 @@ import static priv.wufei.utils.basis.ArrayUtils.isNotEmpty;
 import static priv.wufei.utils.basis.ReflectUtils.defineClass;
 
 /**
- * Javassist字节码工具
+ * Javassist框架
  *
  * @author WuFei
  */

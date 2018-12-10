@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import java.util.List;
 
 /**
- * FastJson工具
+ * FastJson框架
  *
  * @author WuFei
  */

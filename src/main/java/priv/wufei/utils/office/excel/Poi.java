@@ -15,7 +15,7 @@ import java.io.IOException;
 import static priv.wufei.utils.basis.IOUtils.output;
 
 /**
- * poi工具
+ * poi框架
  *
  * @author WuFei
  */

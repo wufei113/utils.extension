@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import static priv.wufei.utils.basis.ReflectUtils.defineClass;
 
 /**
- * ASM字节码工具
+ * ASM框架
  *
  * @author WuFei
  */

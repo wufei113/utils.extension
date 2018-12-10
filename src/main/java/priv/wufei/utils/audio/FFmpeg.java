@@ -9,7 +9,7 @@ import static priv.wufei.utils.basis.PropertiesUtils.getString;
 import static priv.wufei.utils.basis.PropertiesUtils.loadProperties;
 
 /**
- * FFmpeg音频工具
+ * FFmpeg音频
  *
  * @author WuFei
  */

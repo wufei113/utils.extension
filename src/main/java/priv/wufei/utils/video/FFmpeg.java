@@ -16,7 +16,7 @@ import static priv.wufei.utils.basis.PropertiesUtils.loadProperties;
 import static priv.wufei.utils.basis.StringUtils.isNotBlank;
 
 /**
- * FFmpeg视频工具
+ * FFmpeg视频
  *
  * @author WuFei
  */
