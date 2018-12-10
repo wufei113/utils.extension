@@ -13,8 +13,8 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import priv.wufei.utils.basis.enumeration.LanguageEncode;
-import priv.wufei.utils.basis.enumeration.RenderingHint;
+import priv.wufei.utils.basis.enums.LanguageEncode;
+import priv.wufei.utils.basis.enums.RenderingHint;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

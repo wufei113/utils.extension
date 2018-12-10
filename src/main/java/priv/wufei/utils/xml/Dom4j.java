@@ -4,7 +4,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import priv.wufei.utils.basis.function.ConsumerThrow1;
+import priv.wufei.utils.basis.functions.ConsumerThrow1;
 
 import java.io.File;
 import java.util.Iterator;
