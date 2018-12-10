@@ -15,16 +15,16 @@ import java.io.IOException;
 import static priv.wufei.utils.basis.IOUtils.output;
 
 /**
- * poi框架
+ * POI框架
  *
  * @author WuFei
  */
-public final class Poi {
+public final class POI {
 
     /**
      * 不能实例化这个类
      */
-    private Poi() {
+    private POI() {
     }
 
     /**
