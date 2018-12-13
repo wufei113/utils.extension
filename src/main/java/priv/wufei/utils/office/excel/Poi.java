@@ -19,12 +19,12 @@ import static priv.wufei.utils.basis.IOUtils.output;
  *
  * @author WuFei
  */
-public final class POI {
+public final class Poi {
 
     /**
      * 不能实例化这个类
      */
-    private POI() {
+    private Poi() {
     }
 
     /**
